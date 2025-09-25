@@ -1,0 +1,29 @@
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { DollarSign } from 'lucide-react';
+
+export default function AdminPayrolls() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <DollarSign size={22} /> Payroll (Coming Soon)
+        </h1>
+        <Button variant="outline" disabled>
+          Konfigurasi
+        </Button>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Ringkasan</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-gray-500 dark:text-gray-400 py-8 text-center">
+            Halaman ini akan menampilkan penggajian, slip gaji, dan export.
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

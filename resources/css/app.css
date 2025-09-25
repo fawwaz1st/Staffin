@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FFF9F0;
+  --color-cream-50: #FFFFFF;
+  --color-cream-100: #FFFAF5;
+  --color-cream-200: #FFF3E0;
+  --color-cream-300: #FFECCC;
+  --color-coffee: #A6774D;
+  --color-coffee-light: #E6C89B;
+  --color-coffee-dark: #8B6239;
+  --color-coffee-50: #F5EBDF;
+  --color-coffee-100: #E6C89B;
+  --color-coffee-200: #D4AF7D;
+  --color-coffee-300: #C19660;
+  --color-coffee-400: #A6774D;
+  --color-coffee-500: #8B6239;
+  --color-coffee-600: #6F4E2D;
+  --color-ink: #2C2C2C;
+  --color-ink-light: #6B6B6B;
+  --color-ink-lighter: #9A9A9A;
+  --color-primary-50: #F5EBDF;
+  --color-primary-100: #E6C89B;
+  --color-primary-200: #D4AF7D;
+  --color-primary-300: #C19660;
+  --color-primary-400: #A6774D;
+  --color-primary-500: #8B6239;
+  --color-primary-600: #6F4E2D;
+  --color-primary-700: #5A3F24;
+  --color-primary-800: #45301B;
+  --color-primary-900: #302112;
+  --color-secondary-50: #f5f3ff;
+  --color-secondary-100: #ede9fe;
+  --color-secondary-200: #ddd6fe;
+  --color-secondary-300: #c4b5fd;
+  --color-secondary-400: #a78bfa;
+  --color-secondary-500: #8b5cf6;
+  --color-secondary-600: #7c3aed;
+  --color-secondary-700: #6d28d9;
+  --color-secondary-800: #5b21b6;
+  --color-secondary-900: #4c1d95;
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-pastel-green: #B8E6B8;
+  --color-pastel-red: #FFB8B8;
+  --color-pastel-yellow: #FFE4B8;
+  --color-pastel-blue: #B8D4FF;
+  --color-surface: #ffffff;
+  --color-surface-dark: #111827;
+  --font-sans: "Poppins", system-ui, sans-serif;
+  --font-display: "Nunito", system-ui, sans-serif;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-cream: 0 4px 20px rgba(166, 119, 77, 0.08);
+}
+
+:root {
+  --surface-app: var(--color-cream);
+  --surface-card: #ffffff;
+  --surface-soft: #fff3e0;
+  --surface-overlay: rgba(255, 249, 240, 0.86);
+  --nav-blur: rgba(255, 255, 255, 0.92);
+  --bottom-gradient: linear-gradient(180deg, rgba(255,249,240,0) 0%, rgba(255,249,240,0.86) 55%, rgba(255,249,240,1) 100%);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-ink-light);
+  --text-muted: var(--color-ink-lighter);
+  --border-divider: rgba(214, 175, 125, 0.28);
+  --shadow-elevated: 0 20px 45px -20px rgba(166, 119, 77, 0.35);
+  --shadow-floating: 0 18px 40px -20px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --surface-app: #0f141d;
+  --surface-card: #161f2b;
+  --surface-soft: #1f2a38;
+  --surface-overlay: rgba(18, 23, 33, 0.92);
+  --nav-blur: rgba(18, 23, 33, 0.88);
+  --bottom-gradient: linear-gradient(180deg, rgba(16,19,24,0) 0%, rgba(16,19,24,0.88) 55%, rgba(16,19,24,1) 100%);
+  --color-ink: #f8fbff;
+  --color-ink-light: rgba(255, 255, 255, 0.82);
+  --color-ink-lighter: rgba(255, 255, 255, 0.62);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-ink-light);
+  --text-muted: var(--color-ink-lighter);
+  --border-divider: rgba(98, 121, 158, 0.35);
+  --shadow-elevated: 0 24px 48px -20px rgba(7, 12, 24, 0.6);
+  --shadow-floating: 0 24px 50px -25px rgba(0, 0, 0, 0.65);
+}
+
+@layer base {
+  html {
+    font-smooth: always;
+    background-color: var(--surface-app);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  body {
+    background-color: var(--surface-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  .bg-app {
+    background-color: var(--surface-app);
+  }
+
+  .bg-card {
+    background-color: var(--surface-card);
+  }
+
+  .bg-soft {
+    background-color: var(--surface-soft);
+  }
+
+  .bg-overlay {
+    background-color: var(--surface-overlay);
+  }
+
+  .bg-bottom-gradient {
+    background-image: var(--bottom-gradient);
+    background-repeat: no-repeat;
+  }
+
+  .nav-blur {
+    background-color: var(--nav-blur);
+    backdrop-filter: blur(14px);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .border-divider {
+    border-color: var(--border-divider);
+  }
+
+  .border-divider\/40 {
+    border-color: color-mix(in srgb, var(--border-divider) 40%, transparent);
+  }
+
+  .border-divider\/30 {
+    border-color: color-mix(in srgb, var(--border-divider) 30%, transparent);
+  }
+
+  .border-divider\/20 {
+    border-color: color-mix(in srgb, var(--border-divider) 20%, transparent);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .shadow-floating {
+    box-shadow: var(--shadow-floating);
+  }
+
+  .row-hover {
+    transition: background-color 0.25s ease;
+  }
+
+  .row-hover:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  [data-theme='dark'] .row-hover:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-cream-200);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-coffee-light);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-coffee);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
