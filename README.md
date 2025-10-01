@@ -133,7 +133,12 @@ npm run build
 ## Testing & QA
 * `php artisan test`
 * `npm run lint`
+* `npm run build`
 * Hook `useFetch` menggunakan `AbortController` & memo untuk mencegah infinite loading.
+
+## Catatan Pembaruan
+* __2025-10-01__ – Dashboard admin kini mengambil data real-time via endpoint `GET /api/dashboard/admin/summary`, meliputi ringkasan kehadiran mingguan, distribusi status cuti, dan tabel pengajuan terbaru langsung dari database.
+* __2025-10-01__ – Badge notifikasi di sidebar & bottom nav kini memanfaatkan data notifikasi per fitur (users, shifts, attendance, leaves, payroll) sehingga ikon lonceng di topbar dihapus dan digantikan indikator per menu.
 
 ## Roadmap
 * Integrasi data real dashboard.

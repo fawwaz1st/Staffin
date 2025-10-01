@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Users,
@@ -11,8 +11,8 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { fetchUsersSummary } from '@/api/admin/users';
 import AdminHeader from '@/components/layout/AdminHeader';
+import { AdminDashboardProvider, useAdminDashboard } from '@/contexts/AdminDashboardContext';
 
 interface NavItem {
   key: string;
@@ -51,12 +51,10 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+const AdminLayoutContent: React.FC<AdminLayoutProps> = ({ children }) => {
   const { user, loading } = useAuth();
-  const [pendingCount, setPendingCount] = useState(0);
+  const { data, refresh, isLoading: dashboardLoading } = useAdminDashboard();
   const location = useLocation();
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const stopPollingRef = useRef(false);
   const [viewportWidth, setViewportWidth] = useState<number>(() => (typeof window !== 'undefined' ? window.innerWidth : 1024));
   const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState(false);
 
@@ -82,50 +80,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   }, [viewportWidth]);
 
   useEffect(() => {
-    let mounted = true;
-    if (loading) return undefined;
-    if (!isApprovedAdmin) {
-      setPendingCount(0);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      return undefined;
+    if (!loading && isApprovedAdmin) {
+      void refresh();
     }
+  }, [loading, isApprovedAdmin, refresh]);
 
-    stopPollingRef.current = false;
-
-    const load = async () => {
-      try {
-        const summary = await fetchUsersSummary();
-        if (mounted) {
-          setPendingCount(summary?.pending || 0);
-        }
-      } catch (error: unknown) {
-        const status = (error as { response?: { status?: number } })?.response?.status;
-        if (status === 403) {
-          stopPollingRef.current = true;
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
-        }
-      }
-    };
-
-    void load();
-    timerRef.current = setInterval(() => {
-      if (!stopPollingRef.current) void load();
-    }, 30000);
-
-    return () => {
-      mounted = false;
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [loading, isApprovedAdmin]);
+  const notifications: Record<string, number> = useMemo(() => {
+    if (!isApprovedAdmin || dashboardLoading || !data?.notifications) {
+      return {};
+    }
+    return { ...data.notifications };
+  }, [data?.notifications, dashboardLoading, isApprovedAdmin]);
 
   return (
     <div className="min-h-screen bg-app text-primary flex transition-colors">
@@ -134,9 +99,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       >
         <div className="flex flex-col w-full">
           <SidebarContent
-            pendingCount={pendingCount}
             disableBadge={!isApprovedAdmin}
             collapsed={desktopSidebarCollapsed}
+            notifications={notifications}
           />
         </div>
       </div>
@@ -146,8 +111,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           isSidebarCollapsed={desktopSidebarCollapsed}
           showSidebarToggle={true}
           onToggleSidebar={() => setDesktopSidebarCollapsed((prev) => !prev)}
-          pendingCount={pendingCount}
-          isApprovedAdmin={isApprovedAdmin}
           userName={user?.name ?? ''}
           userInitial={user?.name?.charAt(0)?.toUpperCase() ?? 'A'}
         />
@@ -171,7 +134,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <MobileBottomNav
           items={navigation}
           currentPath={location.pathname}
-          pendingCount={pendingCount}
+          notifications={notifications}
           isAdmin={isAdmin}
           isApproved={isApprovedAdmin}
           density={navDensity}
@@ -181,13 +144,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   );
 };
 
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => (
+  <AdminDashboardProvider>
+    <AdminLayoutContent>{children}</AdminLayoutContent>
+  </AdminDashboardProvider>
+);
+
 interface SidebarContentProps {
-  pendingCount: number;
   disableBadge?: boolean;
   collapsed?: boolean;
+  notifications?: Record<string, number>;
 }
 
-function SidebarContent({ pendingCount, disableBadge = false, collapsed = false }: SidebarContentProps) {
+function SidebarContent({ disableBadge = false, collapsed = false, notifications = {} }: SidebarContentProps) {
   const location = useLocation();
 
   return (
@@ -204,7 +173,8 @@ function SidebarContent({ pendingCount, disableBadge = false, collapsed = false 
         <nav className={`flex-1 ${collapsed ? 'px-2 space-y-1' : 'px-3 space-y-2'}`}>
           {NAVIGATION_ITEMS.map((item) => {
             const active = isNavActive(location.pathname, item.href);
-            const showBadge = !collapsed && item.key === 'users' && pendingCount > 0 && !disableBadge;
+            const count = notifications[item.key] ?? 0;
+            const showBadge = !collapsed && count > 0 && !disableBadge;
             const ItemIcon = item.icon;
 
             return (
@@ -223,7 +193,7 @@ function SidebarContent({ pendingCount, disableBadge = false, collapsed = false 
                 </span>
                 {showBadge && (
                   <span className="inline-flex items-center justify-center rounded-full bg-warning-500 px-2 text-xs font-semibold text-white">
-                    {pendingCount}
+                    {count}
                   </span>
                 )}
               </Link>
@@ -238,13 +208,13 @@ function SidebarContent({ pendingCount, disableBadge = false, collapsed = false 
 interface MobileBottomNavProps {
   items: NavItem[];
   currentPath: string;
-  pendingCount: number;
+  notifications?: Record<string, number>;
   isAdmin: boolean;
   isApproved: boolean;
   density: 'comfortable' | 'cozy' | 'compact' | 'ultra';
 }
 
-function MobileBottomNav({ items, currentPath, pendingCount, isAdmin, isApproved, density }: MobileBottomNavProps) {
+function MobileBottomNav({ items, currentPath, notifications = {}, isAdmin, isApproved, density }: MobileBottomNavProps) {
   if (!isAdmin) return null;
 
   const presets = {
@@ -289,7 +259,8 @@ function MobileBottomNav({ items, currentPath, pendingCount, isAdmin, isApproved
             {items.map((item) => {
               const active = isNavActive(currentPath, item.href);
               const ItemIcon = item.icon;
-              const showBadge = item.key === 'users' && pendingCount > 0 && isApproved;
+              const count = notifications[item.key] ?? 0;
+              const showBadge = count > 0 && isApproved;
 
               return (
                 <li key={item.key} className="flex-shrink-0" role="presentation">
@@ -303,7 +274,7 @@ function MobileBottomNav({ items, currentPath, pendingCount, isAdmin, isApproved
                       <ItemIcon className={`${preset.icon} ${active ? 'text-white' : 'text-coffee-light'}`} />
                       {showBadge && (
                         <span className={`absolute -top-1 -right-1 inline-flex items-center justify-center ${preset.badge} px-1 rounded-full font-semibold bg-warning-500 text-white`}>
-                          {pendingCount}
+                          {count}
                         </span>
                       )}
                     </span>
